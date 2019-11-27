@@ -1,9 +1,17 @@
 ﻿@using Sitecore.Forms.Mvc.Html
 @model Sitecore.Forms.Mvc.ViewModels.SectionViewModel
 
+@{
+  var hiddenClass = string.Empty;
+    if (!Model.Visible)
+    {
+        hiddenClass = "hidden";
+    }
+ }
+
 @if (Model.ShowTitle && !string.IsNullOrEmpty(Model.Title))
 {
-    <fieldset class="@Model.CssClass">
+    <fieldset class="@Model.CssClass @hiddenClass">
         <legend>@Html.BootstrapText("Title")</legend>
         @if (Model.ShowInformation && !string.IsNullOrEmpty(Model.Information))
         {

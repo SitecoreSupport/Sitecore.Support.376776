@@ -48,13 +48,13 @@ namespace Sitecore.Support.Forms.Mvc.Services
             formViewModel.CssClass = ((formModel.Item.FormTypeClass ?? string.Empty) + " " + (formModel.Item.CustomCss ?? string.Empty) + " " + (formModel.Item.FormAlignment ?? string.Empty)).Trim();
             ReflectionUtils.SetXmlProperties(formViewModel, formModel.Item.Parameters, ignoreErrors: true);
             formViewModel.Sections = (from x in formModel.Item.SectionItems
-                select GetSectionViewModel(new SectionItem(x), formViewModel) into x
+                select GetSectionViewModelEx(new SectionItem(x), formViewModel) into x
                 where x != null
                 select x).ToList();
             return formViewModel;
         }
 
-        protected SectionViewModel GetSectionViewModel(SectionItem item, FormViewModel formViewModel)
+        protected SectionViewModel GetSectionViewModelEx(SectionItem item, FormViewModel formViewModel)
         {
             Assert.ArgumentNotNull(item, "item");
             Assert.ArgumentNotNull(formViewModel, "formViewModel");
@@ -81,11 +81,14 @@ namespace Sitecore.Support.Forms.Mvc.Services
             {
                 RulesManager.RunRules(item.Conditions, sectionViewModel);
             }
-            if (sectionViewModel.Visible)
+
+            if (!sectionViewModel.Visible)
             {
-                return sectionViewModel;
+                sectionViewModel.Fields.ForEach(f => f.Visible = false);
             }
-            return null;
+
+            return sectionViewModel;
+          
         }
     }
 }
